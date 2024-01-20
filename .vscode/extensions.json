@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "bradlc.vscode-tailwindcss",
+        "github.copilot",
+        "eamodio.gitlens",
+        "ms-toolsai.jupyter",
+        "ms-python.python"
+    ]
+}
