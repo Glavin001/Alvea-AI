@@ -149,6 +149,7 @@ Instructions:
                     // const json = parseFunctionCall(m.function_call);
                     // console.log('m.function_call', m.function_call, { json });
                     const json = typeof m.function_call === 'string' ? processNominalJsonString(m.function_call) : m.function_call;
+                    const isFunctionCallDone = typeof m.function_call === 'object';
 
                     // const json = typeof m.function_call === "object" ? m.function_call : null;
                     return (
@@ -169,7 +170,11 @@ Instructions:
                                     <ErrorBoundary
                                         fallbackRender={fallbackRender}
                                         resetKeys={[JSON.stringify(json)]}>
-                                        <DynamicComponent functionCall={json} onSubmit={onSubmitFormComponent} />
+                                            <pre>
+                                                {JSON.stringify(json, null, 2)}
+                                            </pre>
+                                            <div>{isFunctionCallDone ? "Done!" : "Writing..."}</div>
+                                            <DynamicComponent functionCall={json} onSubmit={onSubmitFormComponent} />
                                     </ErrorBoundary>
                                 </>
                                 )}
@@ -234,11 +239,11 @@ function DynamicComponent({ functionCall, onSubmit }: any) {
         const { jsonSchema, uiSchema } = prevState.current;
 
         return <div>
-            {/* Upsert form */}
+            Upsert form
             <ErrorBoundary
                 fallbackRender={fallbackRender}
                 resetKeys={[JSON.stringify(jsonSchema), JSON.stringify(uiSchema)]}>
-                <Form jsonSchema={jsonSchema} uiSchema={uiSchema} onSubmit={onSubmit} />
+                    <Form jsonSchema={jsonSchema} uiSchema={uiSchema} onSubmit={onSubmit} />
             </ErrorBoundary>
             {/* <pre>{JSON.stringify(m.function_call, null, 2)}</pre> */}
             {/* <pre>{JSON.stringify(functionCall, null, 2)}</pre> */}
@@ -310,7 +315,7 @@ function DynamicComponent({ functionCall, onSubmit }: any) {
         return <div style={{ 'height': 800 }}>
             {/* <h1>Map Demo</h1> */}
             {/* <pre>{JSON.stringify(prevState.current, null, 2)}</pre> */}
-            <ErrorBoundary fallback={<div>Something went wrong</div>} resetKeys={[JSON.stringify(startPosition), JSON.stringify(markers)]}>
+            <ErrorBoundary fallbackRender={fallbackRender} resetKeys={[JSON.stringify(startPosition), JSON.stringify(markers)]}>
                 {startPosition && (
                     <Map center={startPosition} markers={markers} zoomLevel={zoomLevel} />
                 )}
