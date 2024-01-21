@@ -120,6 +120,28 @@ const functions: ChatCompletionCreateParams.Function[] = [
                     type: 'string',
                     description: `Form identifier. To add a new form create a new unique auto-incrementing ID. To edit an existing form use an existing ID here.`,
                 },
+                markers: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            label: {
+                                type: 'string'
+                            },
+                            color: {
+                                type: 'string',
+                                enum: ['red', 'blue'],
+                            },
+                            lon: {
+                                type: 'number',
+                            },
+                            lat: {
+                                type: 'number'
+                            },
+                        },
+                        required: ['label', 'lon', 'lat']
+                    }
+                },
                 center: {
                     type: 'object',
                     properties: {
@@ -134,29 +156,8 @@ const functions: ChatCompletionCreateParams.Function[] = [
                 },
                 zoomLevel: {
                     type: 'number',
-                    description: `Zoom level`,
+                    description: `Zoom level for Leaflet map`,
                 },
-                markers: {
-                    type: 'array',
-                    items: {
-                        type: 'object',
-                        properties: {
-                            lon: {
-                                type: 'number',
-                            },
-                            lat: {
-                                type: 'number'
-                            },
-                            label: {
-                                type: 'string'
-                            },
-                            color: {
-                                type: 'string'
-                            },
-                        },
-                        required: ['lon', 'lat']
-                    }
-                }
             },
             required: ['id', 'center', 'zoomLevel', 'markers'],
         },

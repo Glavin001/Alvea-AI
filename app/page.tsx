@@ -11,6 +11,10 @@ import dynamic from 'next/dynamic';
 // const Form = dynamic(() => import('@/components/form'), { ssr: false });
 const Form = dynamic(() => import('../components/form'), { ssr: false });
 
+const Map = dynamic(() => import('../components/map/map'), {
+    ssr: false,
+});
+
 export default function Chat() {
     const functionCallHandler: FunctionCallHandler = async (
         chatMessages,
@@ -83,7 +87,7 @@ export default function Chat() {
                     // const json = parseFunctionCall(m.function_call);
                     // console.log('m.function_call', m.function_call, { json });
                     const json = typeof m.function_call === 'string' ? processNominalJsonString(m.function_call) : m.function_call;
-                    
+
                     // const json = typeof m.function_call === "object" ? m.function_call : null;
                     return (
                         <div
@@ -145,7 +149,7 @@ function DynamicComponent({ functionCall }: any) {
         }
         // const args = JSON.parse(functionCall.arguments);
         const args = processNominalJsonString(functionCall.arguments);
-        
+
         try {
             const { jsonSchema: jsonSchemaString, uiSchema: uiSchemaString } = args;
             const jsonSchema = jsonSchemaString ? processNominalJsonString(jsonSchemaString) : {};
@@ -172,6 +176,68 @@ function DynamicComponent({ functionCall }: any) {
             {/* <pre>{JSON.stringify(jsonSchema, null, 2)}</pre>
             <pre>{JSON.stringify(uiSchema, null, 2)}</pre> */}
         </div>
+    }
+    else if (functionCall.name === 'upsert_map') {
+        if (!functionCall.arguments) {
+            return <div>
+                Map...
+            </div>
+        }
+
+        try {
+            const args = processNominalJsonString(functionCall.arguments);
+
+            const locationToPoint = (loc: any) => ((loc && loc?.lat && loc?.lon) ? [loc.lat, loc.lon] : null);
+
+            // const position = [51.505, -0.09]
+            // const position = args?.center ? [args?.center?.lat, args?.center?.lon] : [51.505, -0.09]
+            const centerPosition = args?.center ? locationToPoint(args?.center) : [51.505, -0.09]
+            const zoomLevel = args?.zoomLevel ?? 13;
+            //     const markers = [
+            //         {
+            //         label: 'First location',
+            //         position: [51.505, -0.09],
+            //         color: 'red',
+            //     }, {
+            //         label: 'Second location',
+            //         position: [51.507, -0.07],
+            //         color: 'blue',
+            //     }
+            // ]
+            const markers = args?.markers?.map((marker, markerIndex) => ({
+                label: `${markerIndex + 1}. ${marker?.label}`,
+                position: locationToPoint(marker),
+                color: marker?.color,
+            })) ?? [];
+            // only markers with position
+            const readyMarkers = markers.filter(marker => {
+                // check position has both lon and lat  numbers
+                const hasPosition = marker.position && marker.position.length === 2 && marker.position.every(x => typeof x === 'number');
+                return hasPosition;
+            });
+            // get center position from either centerPosition or the average of ready markers position
+            const startPosition = centerPosition ?? readyMarkers.reduce((acc, marker) => {
+                acc[0] += marker.position[0];
+                acc[1] += marker.position[1];
+                return acc;
+            }, [0, 0]).map(x => x / readyMarkers.length);
+
+            // Save startPosition, markers, zoomLevel to prevState
+            prevState.current.startPosition = startPosition;
+            prevState.current.markers = readyMarkers;
+            prevState.current.zoomLevel = zoomLevel;
+        } catch (error) {
+        }
+
+        const { startPosition, markers, zoomLevel } = prevState.current;
+
+        return <div style={{ 'height': 800 }}>
+            {/* <h1>Map Demo</h1> */}
+            <pre>{JSON.stringify(prevState.current, null, 2)}</pre>
+            <ErrorBoundary fallback={<div>Something went wrong</div>} resetKeys={[JSON.stringify(startPosition), JSON.stringify(markers)]}>
+                <Map center={startPosition} markers={markers} zoomLevel={zoomLevel} />
+            </ErrorBoundary>
+        </div>;
     }
 
     if (JSON.stringify(functionCall).includes('upsert_form')) {
