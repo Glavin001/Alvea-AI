@@ -46,6 +46,25 @@ const functions: ChatCompletionCreateParams.Function[] = [
             required: ['code'],
         },
     },
+    /*
+    {
+        name: 'upsert_text_document',
+        description: 'Write a long rich text document in Markdown',
+        parameters: {
+            type: 'object',
+            properties: {
+                title: {
+                    type: 'string',
+                    // description: ``,
+                },
+                content: {
+                    type: 'string',
+                    description: ``,
+                },
+            },
+            required: ['content'],
+        },
+    },
     {
         name: 'edit_text',
         description: 'Write a long rich text document in Markdown',
@@ -62,6 +81,80 @@ const functions: ChatCompletionCreateParams.Function[] = [
                 },
             },
             required: ['code'],
+        },
+    },
+    */
+    // Form
+    {
+        name: 'upsert_form',
+        description: 'Write React JSON Schema Form:',
+        parameters: {
+            type: 'object',
+            properties: {
+                id: {
+                    type: 'string',
+                    description: `Form identifier. To add a new form create a new unique auto-incrementing ID. To edit an existing form use an existing ID here.`,
+                },
+                jsonSchema: {
+                    type: 'string',
+                },
+                uiShema: {
+                    type: 'string',
+                },
+            },
+            required: ['code'],
+        },
+    },
+    // Map
+    {
+        name: 'upsert_map',
+        description: 'Show a map',
+        parameters: {
+            type: 'object',
+            properties: {
+                id: {
+                    type: 'string',
+                    description: `Form identifier. To add a new form create a new unique auto-incrementing ID. To edit an existing form use an existing ID here.`,
+                },
+                center: {
+                    type: 'object',
+                    properties: {
+                        lon: {
+                            type: 'number',
+                        },
+                        lat: {
+                            type: 'number'
+                        }
+                    },
+                    required: ['lon', 'lat']
+                },
+                zoomLevel: {
+                    type: 'number',
+                    description: `Zoom level`,
+                },
+                markers: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            lon: {
+                                type: 'number',
+                            },
+                            lat: {
+                                type: 'number'
+                            },
+                            label: {
+                                type: 'string'
+                            },
+                            color: {
+                                type: 'string'
+                            },
+                        },
+                        required: ['lon', 'lat']
+                    }
+                }
+            },
+            required: ['id', 'center', 'zoomLevel', 'markers'],
         },
     },
 ];
