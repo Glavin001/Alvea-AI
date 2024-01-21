@@ -86,10 +86,11 @@ const functions: ChatCompletionCreateParams.Function[] = [
         },
     },
     */
-    // Form
+    // Form v1
+  /*
     {
         name: 'upsert_form',
-        description: 'Write React JSON Schema Form:',
+        description: 'Dynamically generate a React JSON Schema Form based on user input:',
         parameters: {
             type: 'object',
             properties: {
@@ -109,6 +110,60 @@ const functions: ChatCompletionCreateParams.Function[] = [
             required: ['id', 'jsonSchema', 'uiSchema'],
         },
     },
+
+*/
+/*
+  // Form v2
+  {
+       name: 'create_simple_form',
+       description: 'Dynamically generate a React JSON Schema Form based on user input',
+       parameters: {
+           type: 'object',
+            properties: {
+               id: {
+                    type: 'string',
+                   description: 'Unique identifier for the form. Use a new ID for a new form or an existing ID to edit an existing form.'
+                },
+                jsonSchema: {
+                   type: 'object',
+                   description: 'JSON schema defining the structure of the form. It should include field types, titles, and descriptions.'
+                },
+                uiSchema: {
+                   type: 'object',
+                   description: 'UI schema for customizing the forms presentation.'
+                }
+           },
+           required: ['id', 'jsonSchema', 'uiSchema']
+        }
+   },
+*/
+  // Form v3
+    {
+        name: 'create_simple_form',
+        description: 'Use this function to convert user-provided information into a structured form. It dynamically generates a form based on the provided JSON schema, tailored to capture specific details as requested by the user. The function ensures that the form is interactive and user-friendly, making it ideal for collecting and organizing user inputs efficiently.',
+       parameters: {
+           type: 'object',
+            properties: {
+                 id: {
+                    type: 'string',
+                     description: 'Unique identifier for the form. Use a new ID for a new form or an existing ID to edit an existing form.'
+                },
+                jsonSchema: {
+                     type: 'object',
+                    description: 'JSON schema defining the structure of the form. It should include field types, titles, and descriptions. Define the data types, required fields, and overall structure of your form here. The schema dictates how user inputs are structured and validated.'
+               },
+                uiSchema: {
+                    type: 'object',
+                    description: 'UI schema for customizing the form\'s presentation. Customize the layout and presentation of your form fields here, including widget types and help texts. This schema controls the visual aspects of the form, enhancing user interaction and experience.'
+               }
+           },
+           required: ['id', 'jsonSchema', 'uiSchema']
+       }
+    },
+
+
+
+  
     // Map
     {
         name: 'upsert_map',
@@ -268,3 +323,5 @@ export async function POST(req: Request) {
     // return new StreamingTextResponse(stream, {}, data);
     return new StreamingTextResponse(stream);
 }
+
+];
