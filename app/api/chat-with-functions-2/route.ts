@@ -157,6 +157,57 @@ const functions: ChatCompletionCreateParams.Function[] = [
             required: ['id', 'center', 'zoomLevel', 'markers'],
         },
     },
+    // 3D generation
+    {
+        name: 'upsert_3d_scene',
+        description: 'Generate 3D scene to visually represent the scene described in the form',
+        parameters: {
+            type: 'object',
+            properties: {
+                id: {
+                    type: 'string',
+                    description: `Form identifier. To add a new form create a new unique auto-incrementing ID. To edit an existing form use an existing ID here.`,
+                },
+                descriptionOfScene: {
+                    type: 'string',
+                    description: 'Exhaustive detailed description of the scene which will be given to an expert 3D software developer'
+                },
+            }
+        },
+    },
+    // Checklist
+    {
+        name: 'upsert_checklist',
+        description: 'Write a checklist',
+        parameters: {
+            type: 'object',
+            properties: {
+                id: {
+                    type: 'string',
+                    description: `Form identifier. To add a new form create a new unique auto-incrementing ID. To edit an existing form use an existing ID here.`,
+                },
+                items: {
+                    type: 'array',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            id: {
+                                type: 'string',
+                            },
+                            label: {
+                                type: 'string',
+                            },
+                            checked: {
+                                type: 'boolean',
+                            },
+                        },
+                        required: ['id', 'label', 'checked']
+                    }
+                }
+            },
+            required: ['id', 'items'],
+        },
+    }
 ];
 
 export async function POST(req: Request) {
