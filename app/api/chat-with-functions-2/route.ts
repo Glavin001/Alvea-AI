@@ -84,55 +84,7 @@ const functions: ChatCompletionCreateParams.Function[] = [
         },
     },
     */
-    // Form v1
-  /*
-    {
-        name: 'upsert_form',
-        description: 'Dynamically generate a React JSON Schema Form based on user input:',
-        parameters: {
-            type: 'object',
-            properties: {
-                id: {
-                    type: 'string',
-                    description: `Form identifier. To add a new form create a new unique auto-incrementing ID. To edit an existing form use an existing ID here.`,
-                },
-                jsonSchema: {
-                    type: 'string',
-                },
-                uiSchema: {
-                    type: 'string',
-                },
-            },
-            required: ['code'],
-        },
-    },
-
-*/
-/*
-  // Form v2
-  {
-       name: 'create_simple_form',
-       description: 'Dynamically generate a React JSON Schema Form based on user input',
-       parameters: {
-           type: 'object',
-            properties: {
-               id: {
-                    type: 'string',
-                   description: 'Unique identifier for the form. Use a new ID for a new form or an existing ID to edit an existing form.'
-                },
-                jsonSchema: {
-                   type: 'object',
-                   description: 'JSON schema defining the structure of the form. It should include field types, titles, and descriptions.'
-                },
-                uiSchema: {
-                   type: 'object',
-                   description: 'UI schema for customizing the forms presentation.'
-                }
-           },
-           required: ['id', 'jsonSchema', 'uiSchema']
-        }
-   },
-*/
+  
   // Form v3
     {
         name: 'create_simple_form',
@@ -157,62 +109,6 @@ const functions: ChatCompletionCreateParams.Function[] = [
        }
     },
 
-
-
-  /*
-    // Map
-    {
-        name: 'upsert_map',
-        description: 'Show a map',
-        parameters: {
-            type: 'object',
-            properties: {
-                id: {
-                    type: 'string',
-                    description: `Form identifier. To add a new form create a new unique auto-incrementing ID. To edit an existing form use an existing ID here.`,
-                },
-                center: {
-                    type: 'object',
-                    properties: {
-                        lon: {
-                            type: 'number',
-                        },
-                        lat: {
-                            type: 'number'
-                        }
-                    },
-                    required: ['lon', 'lat']
-                },
-                zoomLevel: {
-                    type: 'number',
-                    description: `Zoom level`,
-                },
-                markers: {
-                    type: 'array',
-                    items: {
-                        type: 'object',
-                        properties: {
-                            lon: {
-                                type: 'number',
-                            },
-                            lat: {
-                                type: 'number'
-                            },
-                            label: {
-                                type: 'string'
-                            },
-                            color: {
-                                type: 'string'
-                            },
-                        },
-                        required: ['lon', 'lat']
-                    }
-                }
-            },
-            required: ['id', 'center', 'zoomLevel', 'markers'],
-        },
-    },
-    */
   
     // Map v2
     // Enhanced Map Component
@@ -406,5 +302,3 @@ export async function POST(req: Request) {
     // return new StreamingTextResponse(stream, {}, data);
     return new StreamingTextResponse(stream);
 }
-
-];
