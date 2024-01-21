@@ -15,6 +15,7 @@ const openai = new OpenAI({
 export const runtime = 'edge';
 
 const functions: ChatCompletionCreateParams.Function[] = [
+    /*
     {
         name: 'get_current_weather',
         description: 'Get the current weather.',
@@ -46,6 +47,7 @@ const functions: ChatCompletionCreateParams.Function[] = [
             required: ['code'],
         },
     },
+    */
     /*
     {
         name: 'upsert_text_document',
@@ -97,12 +99,14 @@ const functions: ChatCompletionCreateParams.Function[] = [
                 },
                 jsonSchema: {
                     type: 'string',
+                    description: 'Write stringified object for JSON Schema',
                 },
-                uiShema: {
+                uiSchema: {
                     type: 'string',
+                    description: 'Write stringified object for UI Schema',
                 },
             },
-            required: ['code'],
+            required: ['id', 'jsonSchema', 'uiSchema'],
         },
     },
     // Map
