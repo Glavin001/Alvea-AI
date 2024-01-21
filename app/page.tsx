@@ -6,8 +6,13 @@ import { FunctionCallHandler, nanoid } from 'ai';
 import { Message, useChat } from 'ai/react';
 import { OpenAiHandler, StreamParser, StreamMode } from "openai-partial-stream";
 import { ErrorBoundary } from "react-error-boundary";
-
 import dynamic from 'next/dynamic';
+
+import Home from '@/components/home';
+import Sidebar from '@/components/sidebar';
+import Head from 'next/head';
+import { useState } from 'react';
+
 // const Form = dynamic(() => import('@/components/form'), { ssr: false });
 const Form = dynamic(() => import('../components/form'), { ssr: false });
 
@@ -26,6 +31,15 @@ function fallbackRender({ error, resetErrorBoundary }) {
     );
 }
 
+// Generate a map of message role to text color
+const roleToColorMap: Record<Message['role'], string> = {
+    system: 'red',
+    user: 'black',
+    function: 'blue',
+    tool: 'purple',
+    assistant: 'green',
+    data: 'orange',
+};
 
 export default function Chat() {
     const functionCallHandler: FunctionCallHandler = async (
@@ -68,6 +82,9 @@ export default function Chat() {
         }
     };
 
+    const [query, setQuery] = useState('');
+    const [mode, setMode] = useState('home')
+
     const { messages, input, handleInputChange, handleSubmit, append } = useChat({
         api: '/api/chat-with-functions-2',
         experimental_onFunctionCall: functionCallHandler,
@@ -107,6 +124,18 @@ Instructions:
         ]
     });
 
+    const submitFirstQuery = (query: string) => {
+        setQuery(query);
+        console.log('run query', query)
+        append({
+            id: nanoid(),
+            role: 'user',
+            content: query,
+            createdAt: new Date(),
+        });
+        setMode('tools');
+    };
+
     const onSubmitFormComponent = (formValues: any) => {
         console.log('onSubmitFormComponent', formValues);
         const formResponse: Message = {
@@ -120,15 +149,36 @@ Instructions:
         append(formResponse);
     }
 
-    // Generate a map of message role to text color
-    const roleToColorMap: Record<Message['role'], string> = {
-        system: 'red',
-        user: 'black',
-        function: 'blue',
-        tool: 'purple',
-        assistant: 'green',
-        data: 'orange',
-    };
+
+    const isBigMessage = (message: Message) => {
+        return message.function_call && JSON.stringify(message.function_call).includes('create_dynamic_map')
+      };
+      const bigMessages = messages.filter(isBigMessage);
+      const chatMessages = messages.filter((msg) => !isBigMessage(msg))
+        .filter(message => message.role !== 'system')
+  
+      const bigMessage = bigMessages[bigMessages.length - 1];
+  
+
+    return (
+        <>
+            <Head>
+                <title>Alvea - UI Demo</title>
+            </Head>
+            <div className={`mode-${mode}`}>
+                {mode === 'home' && (
+                    <Home runQuery={submitFirstQuery} />
+                )}
+                {mode === 'tools' && (
+                    <div className={"tools"}>
+                        <Sidebar messages={chatMessages} onSubmitFormComponent={onSubmitFormComponent} ShowMessage={ShowMessage}>
+                            {bigMessage && <ShowMessage message={bigMessage} onSubmitFormComponent={onSubmitFormComponent} />}
+                        </Sidebar>
+                    </div>
+                )}
+            </div>
+        </>
+    )
 
     return (
         <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
@@ -170,11 +220,11 @@ Instructions:
                                     <ErrorBoundary
                                         fallbackRender={fallbackRender}
                                         resetKeys={[JSON.stringify(json)]}>
-                                            <pre>
-                                                {JSON.stringify(json, null, 2)}
-                                            </pre>
-                                            <div>{isFunctionCallDone ? "Done!" : "Writing..."}</div>
-                                            <DynamicComponent functionCall={json} onSubmit={onSubmitFormComponent} />
+                                        <pre>
+                                            {JSON.stringify(json, null, 2)}
+                                        </pre>
+                                        <div>{isFunctionCallDone ? "Done!" : "Writing..."}</div>
+                                        <DynamicComponent functionCall={json} onSubmit={onSubmitFormComponent} />
                                     </ErrorBoundary>
                                 </>
                                 )}
@@ -194,6 +244,55 @@ Instructions:
                     onChange={handleInputChange}
                 />
             </form>
+        </div>
+    );
+}
+
+function ShowMessage({ message: m, onSubmitFormComponent }: { message: Message, onSubmitFormComponent: any }) {
+    // const openAiHandler = new OpenAiHandler(StreamMode.StreamObjectKeyValueTokens);
+    // const entityStream = openAiHandler.process(stream);
+
+    // const jsonStreamParser = new StreamParser(StreamMode.StreamObjectKeyValueTokens);
+
+    // const json = !m.content ? parseStreamingJson(m.function_call) : null;
+    // const json = !m.content ? processNominalJsonString(m.function_call) : null;
+    // const json = typeof m.function_call === 'string' ? jsonStreamParser.parse(m.function_call) : m.function_call;
+    // const json = typeof m.function_call === 'string' ? jsonStreamParser.parse(m.function_call) : m.function_call;
+    // const json = parseFunctionCall(m.function_call);
+    // console.log('m.function_call', m.function_call, { json });
+    const json = typeof m.function_call === 'string' ? processNominalJsonString(m.function_call) : m.function_call;
+    const isFunctionCallDone = typeof m.function_call === 'object';
+
+    // const json = typeof m.function_call === "object" ? m.function_call : null;
+    return (
+        <div
+            key={m.id}
+            className="whitespace-pre-wrap"
+            style={{ color: roleToColorMap[m.role] }}
+        >
+            <strong>{`${m.role}: `}</strong>
+            {/* {typeof m.content === 'string' ? (
+                m.content
+            ) : 
+            m.content ? JSON.stringify(m.content, null, 2) : */}
+            {m.content ? (
+                m.content
+            ) :
+                (<>
+                    <ErrorBoundary
+                        fallbackRender={fallbackRender}
+                        resetKeys={[JSON.stringify(json)]}>
+                        <pre>
+                            {JSON.stringify(json, null, 2)}
+                        </pre>
+                        <div>{isFunctionCallDone ? "Done!" : "Writing..."}</div>
+                        <DynamicComponent functionCall={json} onSubmit={onSubmitFormComponent} />
+                    </ErrorBoundary>
+                </>
+                )}
+            {/* {m.content || JSON.stringify(m.function_call)} */}
+            <br />
+            <br />
         </div>
     );
 }
@@ -243,7 +342,7 @@ function DynamicComponent({ functionCall, onSubmit }: any) {
             <ErrorBoundary
                 fallbackRender={fallbackRender}
                 resetKeys={[JSON.stringify(jsonSchema), JSON.stringify(uiSchema)]}>
-                    <Form jsonSchema={jsonSchema} uiSchema={uiSchema} onSubmit={onSubmit} />
+                <Form jsonSchema={jsonSchema} uiSchema={uiSchema} onSubmit={onSubmit} />
             </ErrorBoundary>
             {/* <pre>{JSON.stringify(m.function_call, null, 2)}</pre> */}
             {/* <pre>{JSON.stringify(functionCall, null, 2)}</pre> */}

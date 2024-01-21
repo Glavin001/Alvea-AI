@@ -36,13 +36,17 @@ export default function Component() {
     return (
         <>
         <Head>
-            <title>Alvea - UI Demo`</title>
+            <title>Alvea - UI Demo</title>
         </Head>
         <div className={`mode-${mode}`}>
-            <Home runQuery={runQuery}/>
+            {mode === 'home' && (
+                <Home runQuery={runQuery}/>
+            )}
+            {mode === 'tools' && (
             <div className={"tools"}>
                 <Sidebar messages={messages}/>
             </div>
+            )}
         </div>
       </>
     )

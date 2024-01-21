@@ -110,7 +110,6 @@ const functions: ChatCompletionCreateParams.Function[] = [
            required: ['id', 'jsonSchema', 'uiSchema']
        }
     },
-
   
     // Map v2
     // Enhanced Map Component
