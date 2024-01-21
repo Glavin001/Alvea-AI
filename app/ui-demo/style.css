@@ -1,0 +1,15 @@
+.mode-home .home {
+  display: flex;
+}
+
+.mode-home .tools {
+  display: none;
+}
+
+.mode-tools .home {
+  display: none;
+}
+
+.mode-tools .tools {
+  display: block;
+}

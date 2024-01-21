@@ -22,3 +22,13 @@ export default function Page() {
     </div>;
 }
 
+// 0-1 form
+// extract form from messgess, move form shown on left
+// subit form sends message
+// new prompt to detect intent, etc, pick tools
+
+
+
+// map labels
+// stryle radio nice buttons
+// title and descriptiob for fields
