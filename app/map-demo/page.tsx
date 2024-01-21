@@ -1,39 +1,25 @@
-'use client';
-
-// import 'leaflet/dist/leaflet.css';
-
 import dynamic from 'next/dynamic';
 
-const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), {
-    ssr: false,
+
+const Map = dynamic(() => import('../../components/map/map'), {
+        ssr: false,
 });
 
-const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), {
-    ssr: false,
-});
-
-const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), {
-    ssr: false,
-});
-
-const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), {
-    ssr: false,
-});
-
-export default function Map() {
+export default function Page() {
     const position = [51.505, -0.09]
-    return <>
+    const markers = [{
+        label: 'First location',
+        position: [51.505, -0.09],
+        color: 'red',
+    }, {
+        label: 'Second location',
+        position: [51.507, -0.07],
+        color: 'blue',
+    }]
+
+    return <div style={{'height': 600}}>
         <h1>Map Demo</h1>
-        <MapContainer center={position} zoom={13} scrollWheelZoom={false}>
-            <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <Marker position={position}>
-            <Popup>
-                A pretty CSS3 popup. <br /> Easily customizable.
-            </Popup>
-            </Marker>
-        </MapContainer>
-    </>;
+        <Map center={position} markers={markers}/>
+    </div>;
 }
+
