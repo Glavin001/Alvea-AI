@@ -146,7 +146,7 @@ const functions: ChatCompletionCreateParams.Function[] = [
                 },
                 jsonSchema: {
                      type: 'object',
-                    description: 'JSON schema defining the structure of the form. It should include field types, titles, and descriptions. Define the data types, required fields, and overall structure of your form here. The schema dictates how user inputs are structured and validated.'
+                    description: 'JSON schema defining the structure of the form. It should include field types, titles, and descriptions. Define the data types, required fields, and overall structure of your form here. The schema dictates how user inputs are structured and validated. Do not use array types.'
                },
                 uiSchema: {
                     type: 'object',
