@@ -27,6 +27,7 @@ function fallbackRender({ error, resetErrorBoundary }) {
         <div role="alert">
             <p>Something went wrong:</p>
             <pre style={{ color: "red" }}>{error.message}</pre>
+            <button onClick={resetErrorBoundary}>Try again</button>
         </div>
     );
 }
@@ -282,10 +283,11 @@ function ShowMessage({ message: m, onSubmitFormComponent }: { message: Message, 
                     <ErrorBoundary
                         fallbackRender={fallbackRender}
                         resetKeys={[JSON.stringify(json)]}>
-                        <pre>
+                        {/* <pre>
                             {JSON.stringify(json, null, 2)}
-                        </pre>
-                        <div>{isFunctionCallDone ? "Done!" : "Writing..."}</div>
+                        </pre> */}
+                        {/* <div>{isFunctionCallDone ? "Done!" : "Writing..."}</div> */}
+                        <div>{isFunctionCallDone ? "" : "Writing..."}</div>
                         <DynamicComponent functionCall={json} onSubmit={onSubmitFormComponent} />
                     </ErrorBoundary>
                 </>
@@ -338,7 +340,7 @@ function DynamicComponent({ functionCall, onSubmit }: any) {
         const { jsonSchema, uiSchema } = prevState.current;
 
         return <div>
-            Upsert form
+            {/* Upsert form */}
             <ErrorBoundary
                 fallbackRender={fallbackRender}
                 resetKeys={[JSON.stringify(jsonSchema), JSON.stringify(uiSchema)]}>
@@ -411,7 +413,8 @@ function DynamicComponent({ functionCall, onSubmit }: any) {
 
         const { startPosition, markers, zoomLevel } = prevState.current;
 
-        return <div style={{ 'height': 800 }}>
+        // return <div style={{ 'height': 800 }}>
+        return <div style={{ 'height': '100vh' }}>
             {/* <h1>Map Demo</h1> */}
             {/* <pre>{JSON.stringify(prevState.current, null, 2)}</pre> */}
             <ErrorBoundary fallbackRender={fallbackRender} resetKeys={[JSON.stringify(startPosition), JSON.stringify(markers)]}>
@@ -429,8 +432,8 @@ function DynamicComponent({ functionCall, onSubmit }: any) {
     return <>
         <div>Writing...</div>
         {/* <pre>{JSON.stringify(m.function_call, null, 2)}</pre> */}
-        <pre>{JSON.stringify(functionCall, null, 2)}</pre>
-        <pre>{functionCall?.arguments?.contents ?? functionCall?.arguments?.code}</pre>
+        {/* <pre>{JSON.stringify(functionCall, null, 2)}</pre> */}
+        {/* <pre>{functionCall?.arguments?.contents ?? functionCall?.arguments?.code}</pre> */}
     </>
 }
 
