@@ -149,8 +149,8 @@ const functions: ChatCompletionCreateParams.Function[] = [
                      description: 'Unique identifier for the form. Use a new ID for a new form or an existing ID to edit an existing form.'
                 },
                 jsonSchema: {
-                     type: 'string',
-                    description: 'Stringified object of JSON schema defining the structure of the form. It should include field types, titles, and descriptions. Define the data types, required fields, and overall structure of your form here. The schema dictates how user inputs are structured and validated.'
+                    type: 'string',
+                    description: 'Stringified object of JSON schema defining the structure of the form. It should include field types, titles, and descriptions. Define the data types, required fields, and overall structure of your form here. The schema dictates how user inputs are structured and validated. Do not use array types.'
                },
                 uiSchema: {
                     type: 'string',
@@ -328,8 +328,8 @@ const functions: ChatCompletionCreateParams.Function[] = [
     },
     // Checklist
     {
-        name: 'upsert_checklist',
-        description: 'Write a checklist',
+        name: 'create_interactive_checklist',
+        description: 'This function dynamically generates an interactive checklist based on user inputs. Designed to enable users to efficiently manage tasks, goals, or items, this checklist can be customized with various options and states. It is ideal for applications in task management, event planning, or any scenario where a list of items needs to be tracked and updated.',
         parameters: {
             type: 'object',
             properties: {
@@ -344,12 +344,15 @@ const functions: ChatCompletionCreateParams.Function[] = [
                         properties: {
                             id: {
                                 type: 'string',
+                                description: 'Unique identifier for the item. This helps in tracking and updating individual checklist items.'
                             },
                             label: {
                                 type: 'string',
+                                description: 'Text label for the checklist item. This should clearly describe the task or action to be taken.'
                             },
                             checked: {
                                 type: 'boolean',
+                                description: 'Indicates whether the checklist item is initially marked as completed (true) or pending (false).'
                             },
                         },
                         required: ['id', 'label', 'checked']
