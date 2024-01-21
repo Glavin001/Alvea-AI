@@ -15,6 +15,18 @@ const Map = dynamic(() => import('../components/map/map'), {
     ssr: false,
 });
 
+function fallbackRender({ error, resetErrorBoundary }) {
+    // Call resetErrorBoundary() to reset the error boundary and retry the render.
+
+    return (
+        <div role="alert">
+            <p>Something went wrong:</p>
+            <pre style={{ color: "red" }}>{error.message}</pre>
+        </div>
+    );
+}
+
+
 export default function Chat() {
     const functionCallHandler: FunctionCallHandler = async (
         chatMessages,
@@ -56,12 +68,12 @@ export default function Chat() {
         }
     };
 
-    const { messages, input, handleInputChange, handleSubmit } = useChat({
+    const { messages, input, handleInputChange, handleSubmit, append } = useChat({
         api: '/api/chat-with-functions-2',
         experimental_onFunctionCall: functionCallHandler,
         initialMessages: [
             {
-                id: 'system',
+                id: nanoid(),
                 role: 'system',
                 content: `
 You are an intelligent assistant specializing in understanding user needs and intentions for the purpose of dynamically constructing a context-dependent UI using available components.
@@ -77,23 +89,36 @@ Instructions:
 - If you need further context from the user to understand their intention sufficient enough to generate a good UI, respond with 3-5 follow-up questions or statements to clarify the user's intention. Focus on understanding the specific requirements, preferences, or constraints related to their request.
 - If you have only 1 follow-up question then use chat, otherwise always prefer to use a form.
 `
-//                 content: `
-// Now you are an advanced interface designer, capable of creating structured UI schemas based on the available user requirements.
+                //                 content: `
+                // Now you are an advanced interface designer, capable of creating structured UI schemas based on the available user requirements.
 
-// Now that you have analyzed the user's intentions, your next step is to design an interactive, user-friendly form that captures all necessary follow up information to address their request. Use the insights gathered from these follow-up questions to construct a YAML schema and corresponding UI schema that will guide the user through providing detailed and specific information.
+                // Now that you have analyzed the user's intentions, your next step is to design an interactive, user-friendly form that captures all necessary follow up information to address their request. Use the insights gathered from these follow-up questions to construct a YAML schema and corresponding UI schema that will guide the user through providing detailed and specific information.
 
-// Instructions:
-// - Only return correctly formatted JSON output which satisfies the AskUserQuestions type and no comments. Then, create a UI schema focusing on user-friendly interaction methods
-// - Communicate using only the TypeScript types RJSFSchema, UiSchema
-// - Must always use block scalar indicator style in YAML
-// - Make sure you always add help text to input fields
-// - For each form field, start with a sensible default
-// Bonus:
-// - After gathering all the user input, summarize the user's intent in a concise statement, which will inform the choice and configuration of the UI tools that will be invoked using the JSON output from this step.
-// `
+                // Instructions:
+                // - Only return correctly formatted JSON output which satisfies the AskUserQuestions type and no comments. Then, create a UI schema focusing on user-friendly interaction methods
+                // - Communicate using only the TypeScript types RJSFSchema, UiSchema
+                // - Must always use block scalar indicator style in YAML
+                // - Make sure you always add help text to input fields
+                // - For each form field, start with a sensible default
+                // Bonus:
+                // - After gathering all the user input, summarize the user's intent in a concise statement, which will inform the choice and configuration of the UI tools that will be invoked using the JSON output from this step.
+                // `
             }
         ]
     });
+
+    const onSubmitFormComponent = (formValues: any) => {
+        console.log('onSubmitFormComponent', formValues);
+        const formResponse: Message = {
+            id: nanoid(),
+            name: 'create_simple_form',
+            role: 'function' as const,
+            // content: formValues,
+            content: JSON.stringify(formValues.formData),
+            // content: (formValues.formData),
+        };
+        append(formResponse);
+    }
 
     // Generate a map of message role to text color
     const roleToColorMap: Record<Message['role'], string> = {
@@ -133,14 +158,21 @@ Instructions:
                             style={{ color: roleToColorMap[m.role] }}
                         >
                             <strong>{`${m.role}: `}</strong>
+                            {/* {typeof m.content === 'string' ? (
+                                m.content
+                            ) : 
+                            m.content ? JSON.stringify(m.content, null, 2) : */}
                             {m.content ? (
                                 m.content
-                            ) : (<>
-                                <ErrorBoundary fallback={<div>Something went wrong</div>} resetKeys={[JSON.stringify(json)]}>
-                                    <DynamicComponent functionCall={json} />
-                                </ErrorBoundary>
-                            </>
-                            )}
+                            ) :
+                                (<>
+                                    <ErrorBoundary
+                                        fallbackRender={fallbackRender}
+                                        resetKeys={[JSON.stringify(json)]}>
+                                        <DynamicComponent functionCall={json} onSubmit={onSubmitFormComponent} />
+                                    </ErrorBoundary>
+                                </>
+                                )}
                             {/* {m.content || JSON.stringify(m.function_call)} */}
                             <br />
                             <br />
@@ -161,7 +193,7 @@ Instructions:
     );
 }
 
-function DynamicComponent({ functionCall }: any) {
+function DynamicComponent({ functionCall, onSubmit }: any) {
     // console.log('DynamicComponent', functionCall);
 
     const prevState = useRef<any>({});
@@ -184,15 +216,16 @@ function DynamicComponent({ functionCall }: any) {
                 {/* <Form /> */}
             </div>
         }
+
         // const args = JSON.parse(functionCall.arguments);
         const args = processNominalJsonString(functionCall.arguments);
-
         try {
             const { jsonSchema: jsonSchemaString, uiSchema: uiSchemaString } = args;
             const jsonSchema = jsonSchemaString ? processNominalJsonString(jsonSchemaString) : {};
             const uiSchema = uiSchemaString ? processNominalJsonString(uiSchemaString) : {};
 
             // save to prevState
+            prevState.current.args = args;
             prevState.current.jsonSchema = jsonSchema;
             prevState.current.uiSchema = uiSchema;
         } catch (error) {
@@ -202,8 +235,10 @@ function DynamicComponent({ functionCall }: any) {
 
         return <div>
             {/* Upsert form */}
-            <ErrorBoundary fallback={<div>Something went wrong</div>} resetKeys={[JSON.stringify(jsonSchema), JSON.stringify(uiSchema)]}>
-                <Form jsonSchema={jsonSchema} uiSchema={uiSchema} />
+            <ErrorBoundary
+                fallbackRender={fallbackRender}
+                resetKeys={[JSON.stringify(jsonSchema), JSON.stringify(uiSchema)]}>
+                <Form jsonSchema={jsonSchema} uiSchema={uiSchema} onSubmit={onSubmit} />
             </ErrorBoundary>
             {/* <pre>{JSON.stringify(m.function_call, null, 2)}</pre> */}
             {/* <pre>{JSON.stringify(functionCall, null, 2)}</pre> */}
@@ -261,7 +296,7 @@ function DynamicComponent({ functionCall }: any) {
                     return acc;
                 }, [0, 0])
                     .map(x => x / readyMarkers.length)
-            ) : null);
+                ) : null);
 
             // Save startPosition, markers, zoomLevel to prevState
             prevState.current.startPosition = startPosition;

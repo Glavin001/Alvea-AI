@@ -282,6 +282,7 @@ const functions: ChatCompletionCreateParams.Function[] = [
                 }
             },
             required: ['id', 'center', 'zoomLevel', 'markers'],
+            /*
             additionalProperties: {
                 interactiveFeatures: {
                     type: 'object',
@@ -302,6 +303,7 @@ const functions: ChatCompletionCreateParams.Function[] = [
                     description: 'Optional interactive features that enhance user engagement with the map. These can be enabled or disabled based on application requirements.'
                 }
             }
+            */
         }
     },
 

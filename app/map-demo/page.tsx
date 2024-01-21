@@ -1,6 +1,5 @@
 import dynamic from 'next/dynamic';
 
-
 const Map = dynamic(() => import('../../components/map/map'), {
         ssr: false,
 });
@@ -19,7 +18,7 @@ export default function Page() {
 
     return <div style={{'height': 600}}>
         <h1>Map Demo</h1>
-        <Map center={position} markers={markers}/>
+        <Map key={JSON.stringify({ position, markers })} center={position} markers={markers}/>
     </div>;
 }
 

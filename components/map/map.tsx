@@ -32,7 +32,7 @@ export default function Map({center, markers, zoomLevel}: MapProps) {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             { markers.map(data => {
-                return <Marker position={data.position} icon={markersByColor[data?.color ?? 'red']}>
+                return <Marker position={data.position} icon={markersByColor[data?.color] ?? markersByColor['red'] }>
                     <Popup>{data.label}</Popup>
                 </Marker>
             })}

@@ -16,9 +16,8 @@ import validator from '@rjsf/validator-ajv8';
 
 // const log = (type) => console.log.bind(console, type);
 
-export const Form = ({ jsonSchema, uiSchema }) => {
+export const Form = ({ jsonSchema, uiSchema, onSubmit }) => {
     return <div>
-        My Form:
         {/* <pre>
             {JSON.stringify(jsonSchema, null, 2)}
         </pre>
@@ -33,6 +32,7 @@ export const Form = ({ jsonSchema, uiSchema }) => {
             validator={validator}
             // onChange={log('changed')}
             // onSubmit={log('submitted')}
+            onSubmit={onSubmit}
             // onError={log('errors')}
         />
     </div>;
