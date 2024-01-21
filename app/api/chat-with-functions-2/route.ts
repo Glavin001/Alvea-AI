@@ -317,8 +317,8 @@ const functions: ChatCompletionCreateParams.Function[] = [
     },
     // Checklist
     {
-        name: 'upsert_checklist',
-        description: 'Write a checklist',
+        name: 'create_interactive_checklist',
+        description: 'This function dynamically generates an interactive checklist based on user inputs. Designed to enable users to efficiently manage tasks, goals, or items, this checklist can be customized with various options and states. It is ideal for applications in task management, event planning, or any scenario where a list of items needs to be tracked and updated.',
         parameters: {
             type: 'object',
             properties: {
@@ -333,12 +333,15 @@ const functions: ChatCompletionCreateParams.Function[] = [
                         properties: {
                             id: {
                                 type: 'string',
+                                description: 'Unique identifier for the item. This helps in tracking and updating individual checklist items.'
                             },
                             label: {
                                 type: 'string',
+                                description: 'Text label for the checklist item. This should clearly describe the task or action to be taken.'
                             },
                             checked: {
                                 type: 'boolean',
+                                description: 'Indicates whether the checklist item is initially marked as completed (true) or pending (false).'
                             },
                         },
                         required: ['id', 'label', 'checked']
