@@ -59,6 +59,40 @@ export default function Chat() {
     const { messages, input, handleInputChange, handleSubmit } = useChat({
         api: '/api/chat-with-functions-2',
         experimental_onFunctionCall: functionCallHandler,
+        initialMessages: [
+            {
+                id: 'system',
+                role: 'system',
+                content: `
+You are an intelligent assistant specializing in understanding user needs and intentions for the purpose of dynamically constructing a context-dependent UI using available components.
+
+When you receive a user's input, your first task is to decipher the user's intention. Consider the context, the specifics of the request, and any underlying needs or goals. If the request is ambiguous or lacks detail, ask targeted follow-up questions to gather the necessary information. Your aim is to develop a clear and comprehensive understanding of what the user wants to achieve, such that you can invoke the following tools to display to the user:
+
+Available tools:
+- Interactive Map: Essential for travel planning, event locations, and potentially home automation control.
+- 3D Rendering Engine: For interior design, home automation visualization, and potentially for event space planning.
+- Customizable Forms/Input Components: To present to a user to ask them follow up questions that clarify their intent.
+
+Instructions: 
+- If you need further context from the user to understand their intention sufficient enough to generate a good UI, respond with 3-5 follow-up questions or statements to clarify the user's intention. Focus on understanding the specific requirements, preferences, or constraints related to their request.
+- If you have only 1 follow-up question then use chat, otherwise always prefer to use a form.
+`
+//                 content: `
+// Now you are an advanced interface designer, capable of creating structured UI schemas based on the available user requirements.
+
+// Now that you have analyzed the user's intentions, your next step is to design an interactive, user-friendly form that captures all necessary follow up information to address their request. Use the insights gathered from these follow-up questions to construct a YAML schema and corresponding UI schema that will guide the user through providing detailed and specific information.
+
+// Instructions:
+// - Only return correctly formatted JSON output which satisfies the AskUserQuestions type and no comments. Then, create a UI schema focusing on user-friendly interaction methods
+// - Communicate using only the TypeScript types RJSFSchema, UiSchema
+// - Must always use block scalar indicator style in YAML
+// - Make sure you always add help text to input fields
+// - For each form field, start with a sensible default
+// Bonus:
+// - After gathering all the user input, summarize the user's intent in a concise statement, which will inform the choice and configuration of the UI tools that will be invoked using the JSON output from this step.
+// `
+            }
+        ]
     });
 
     // Generate a map of message role to text color
@@ -75,6 +109,9 @@ export default function Chat() {
         <div className="flex flex-col w-full max-w-md py-24 mx-auto stretch">
             {messages.length > 0
                 ? messages.map((m: Message) => {
+                    if (m.role === 'system') {
+                        return null;
+                    }
                     // const openAiHandler = new OpenAiHandler(StreamMode.StreamObjectKeyValueTokens);
                     // const entityStream = openAiHandler.process(stream);
 
@@ -125,7 +162,7 @@ export default function Chat() {
 }
 
 function DynamicComponent({ functionCall }: any) {
-    console.log('DynamicComponent', functionCall);
+    // console.log('DynamicComponent', functionCall);
 
     const prevState = useRef<any>({});
 
@@ -140,7 +177,7 @@ function DynamicComponent({ functionCall }: any) {
     // if functionCall is object and has property functionCall inside it, then use that
     functionCall = functionCall.function_call ?? functionCall;
 
-    if (functionCall.name === 'upsert_form') {
+    if (functionCall.name === 'create_simple_form') {
         if (!functionCall.arguments) {
             return <div>
                 Writing form...
@@ -173,8 +210,8 @@ function DynamicComponent({ functionCall }: any) {
             {/* <pre>{JSON.stringify(args, null, 2)}</pre> */}
             {/* <pre>{functionCall?.arguments?.contents ?? functionCall?.arguments?.code}</pre> */}
             {/* <pre>{args?.contents ?? args?.code}</pre> */}
-            {/* <pre>{JSON.stringify(jsonSchema, null, 2)}</pre>
-            <pre>{JSON.stringify(uiSchema, null, 2)}</pre> */}
+            {/* <pre>{JSON.stringify(jsonSchema, null, 2)}</pre> */}
+            {/* <pre>{JSON.stringify(uiSchema, null, 2)}</pre> */}
         </div>
     }
     else if (functionCall.name === 'upsert_map') {
@@ -240,7 +277,7 @@ function DynamicComponent({ functionCall }: any) {
         </div>;
     }
 
-    if (JSON.stringify(functionCall).includes('upsert_form')) {
+    if (JSON.stringify(functionCall).includes('create_simple_form')) {
         console.log('weird', functionCall);
     }
 

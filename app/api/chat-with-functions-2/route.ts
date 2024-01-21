@@ -149,12 +149,12 @@ const functions: ChatCompletionCreateParams.Function[] = [
                      description: 'Unique identifier for the form. Use a new ID for a new form or an existing ID to edit an existing form.'
                 },
                 jsonSchema: {
-                     type: 'object',
-                    description: 'JSON schema defining the structure of the form. It should include field types, titles, and descriptions. Define the data types, required fields, and overall structure of your form here. The schema dictates how user inputs are structured and validated.'
+                     type: 'string',
+                    description: 'Stringified object of JSON schema defining the structure of the form. It should include field types, titles, and descriptions. Define the data types, required fields, and overall structure of your form here. The schema dictates how user inputs are structured and validated.'
                },
                 uiSchema: {
-                    type: 'object',
-                    description: 'UI schema for customizing the form\'s presentation. Customize the layout and presentation of your form fields here, including widget types and help texts. This schema controls the visual aspects of the form, enhancing user interaction and experience.'
+                    type: 'string',
+                    description: 'Stringified object of UI schema for customizing the form\'s presentation. Customize the layout and presentation of your form fields here, including widget types and help texts. This schema controls the visual aspects of the form, enhancing user interaction and experience.'
                }
            },
            required: ['id', 'jsonSchema', 'uiSchema']
@@ -162,8 +162,6 @@ const functions: ChatCompletionCreateParams.Function[] = [
     },
 
 
-
-  
     // Map
     {
         name: 'upsert_map',
@@ -323,5 +321,3 @@ export async function POST(req: Request) {
     // return new StreamingTextResponse(stream, {}, data);
     return new StreamingTextResponse(stream);
 }
-
-];
