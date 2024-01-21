@@ -251,6 +251,10 @@ const functions: ChatCompletionCreateParams.Function[] = [
                     items: {
                         type: 'object',
                         properties: {
+                            label: {
+                                type: 'string',
+                                description: 'A textual label for the marker, such as a place name or description.'
+                            },
                             lon: {
                                 type: 'number',
                                 description: 'Longitude of the marker position.'
@@ -259,16 +263,12 @@ const functions: ChatCompletionCreateParams.Function[] = [
                                 type: 'number',
                                 description: 'Latitude of the marker position.'
                             },
-                            label: {
-                                type: 'string',
-                                description: 'A textual label for the marker, such as a place name or description.'
-                            },
                             color: {
                                 type: 'string',
                                 description: 'Color of the marker. This can be used to categorize or differentiate markers.'
-                            },
+                            }
                         },
-                        required: ['lon', 'lat', 'label']
+                        required: ['label', 'lon', 'lat']
                     }
                 }
             },
