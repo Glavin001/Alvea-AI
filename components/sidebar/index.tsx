@@ -40,7 +40,7 @@ export default function Sidebar({ messages, children, ShowMessage, onSubmitFormC
         <div className="flex h-screen">
         <div className="w-1/4 border-r">
           <div className="p-4">
-            <h2 className="text-lg font-semibold">Sidebar Title</h2>
+            <h2 className="text-lg font-semibold">Chat</h2>
             <div className="mt-4 space-y-2">
                 { messages.map((message, index) => {
                     return <div className="p-2 rounded-md bg-gray-100 dark:bg-gray-800">

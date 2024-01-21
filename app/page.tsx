@@ -156,7 +156,7 @@ Instructions:
       };
       const bigMessages = messages.filter(isBigMessage);
       const chatMessages = messages.filter((msg) => !isBigMessage(msg))
-        .filter(message => message.role !== 'system')
+        .filter(message => message.role !== 'system' && message.role !== 'function')
   
       const bigMessage = bigMessages[bigMessages.length - 1];
   
@@ -271,7 +271,7 @@ function ShowMessage({ message: m, onSubmitFormComponent }: { message: Message, 
             className="whitespace-pre-wrap"
             style={{ color: roleToColorMap[m.role] }}
         >
-            <strong>{`${m.role}: `}</strong>
+            <strong>{`${m.role.toUpperCase()}: `}</strong>
             {/* {typeof m.content === 'string' ? (
                 m.content
             ) : 
