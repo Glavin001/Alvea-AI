@@ -162,6 +162,8 @@ const functions: ChatCompletionCreateParams.Function[] = [
     },
 
 
+
+  /*
     // Map
     {
         name: 'upsert_map',
@@ -215,7 +217,96 @@ const functions: ChatCompletionCreateParams.Function[] = [
             required: ['id', 'center', 'zoomLevel', 'markers'],
         },
     },
-    // 3D generation
+    */
+  
+    // Map v2
+    // Enhanced Map Component
+    {
+        name: 'create_dynamic_map',
+        description: 'This function dynamically generates an interactive map based on user inputs. It is designed to visually represent geographic data or locations as specified by the user. The map can be customized with various markers, zoom levels, and center points, making it ideal for applications in travel planning, event location scouting, or geographical data visualization.',
+        parameters: {
+            type: 'object',
+            properties: {
+                id: {
+                    type: 'string',
+                    description: 'Unique identifier for the map. Use a new ID for a new map or an existing ID to edit an existing map. This ensures each map instance is uniquely referenced and managed.'
+                },
+                center: {
+                    type: 'object',
+                    description: 'Coordinates for the central focus of the map. This setting controls which geographical area the map initially displays.',
+                    properties: {
+                        area: {
+                            type: 'string',
+                            description: 'A short textual description for central focus, such as a place name or description.'
+                        },
+                        lon: {
+                            type: 'number',
+                            description: 'Longitude of the map’s center point. Determines the horizontal focal point of the map.'
+                        },
+                        lat: {
+                            type: 'number',
+                            description: 'Latitude of the map’s center point. Determines the vertical focal point of the map.'
+                        }
+                    },
+                    required: ['area', 'lon', 'lat'],
+                },
+                zoomLevel: {
+                    type: 'number',
+                    description: 'Defines the initial zoom level of the map. A higher value indicates a closer view, and a lower value provides a broader view. Adjust this to control how much of the area around the center point is visible upon loading.'
+                },
+                markers: {
+                    type: 'array',
+                    description: 'A collection of markers to be placed on the map. Each marker represents a specific location or point of interest.',
+                    items: {
+                        type: 'object',
+                        properties: {
+                            lon: {
+                                type: 'number',
+                                description: 'Longitude of the marker position.'
+                            },
+                            lat: {
+                                type: 'number',
+                                description: 'Latitude of the marker position.'
+                            },
+                            label: {
+                                type: 'string',
+                                description: 'A textual label for the marker, such as a place name or description.'
+                            },
+                            color: {
+                                type: 'string',
+                                description: 'Color of the marker. This can be used to categorize or differentiate markers.'
+                            },
+                        },
+                        required: ['lon', 'lat', 'label']
+                    }
+                }
+            },
+            required: ['id', 'center', 'zoomLevel', 'markers'],
+            additionalProperties: {
+                interactiveFeatures: {
+                    type: 'object',
+                    properties: {
+                        draggableMarkers: {
+                            type: 'boolean',
+                            description: 'Allow markers to be draggable for user interaction. Useful for applications requiring location adjustments.'
+                        },
+                        routePlanning: {
+                            type: 'boolean',
+                            description: 'Enable route planning features between markers. Ideal for travel or logistics planning.'
+                        },
+                        areaHighlighting: {
+                            type: 'boolean',
+                            description: 'Allow users to highlight specific areas on the map, useful for emphasizing regions or territories.'
+                        }
+                    },
+                    description: 'Optional interactive features that enhance user engagement with the map. These can be enabled or disabled based on application requirements.'
+                }
+            }
+        }
+    },
+
+
+  // 3D generation
     {
         name: 'upsert_3d_scene',
         description: 'Generate 3D scene to visually represent the scene described in the form',

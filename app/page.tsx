@@ -201,7 +201,7 @@ function DynamicComponent({ functionCall }: any) {
         const { jsonSchema, uiSchema } = prevState.current;
 
         return <div>
-            Upsert form
+            {/* Upsert form */}
             <ErrorBoundary fallback={<div>Something went wrong</div>} resetKeys={[JSON.stringify(jsonSchema), JSON.stringify(uiSchema)]}>
                 <Form jsonSchema={jsonSchema} uiSchema={uiSchema} />
             </ErrorBoundary>
@@ -214,7 +214,7 @@ function DynamicComponent({ functionCall }: any) {
             {/* <pre>{JSON.stringify(uiSchema, null, 2)}</pre> */}
         </div>
     }
-    else if (functionCall.name === 'upsert_map') {
+    else if (functionCall.name === 'create_dynamic_map') {
         if (!functionCall.arguments) {
             return <div>
                 Map...
@@ -228,7 +228,8 @@ function DynamicComponent({ functionCall }: any) {
 
             // const position = [51.505, -0.09]
             // const position = args?.center ? [args?.center?.lat, args?.center?.lon] : [51.505, -0.09]
-            const centerPosition = args?.center ? locationToPoint(args?.center) : [51.505, -0.09]
+            // const centerPosition = args?.center ? locationToPoint(args?.center) : [51.505, -0.09]
+            const centerPosition = args?.center ? locationToPoint(args?.center) : null
             const zoomLevel = args?.zoomLevel ?? 13;
             //     const markers = [
             //         {
@@ -253,11 +254,14 @@ function DynamicComponent({ functionCall }: any) {
                 return hasPosition;
             });
             // get center position from either centerPosition or the average of ready markers position
-            const startPosition = centerPosition ?? readyMarkers.reduce((acc, marker) => {
-                acc[0] += marker.position[0];
-                acc[1] += marker.position[1];
-                return acc;
-            }, [0, 0]).map(x => x / readyMarkers.length);
+            const startPosition = centerPosition ?? (
+                readyMarkers.length > 0 ? (readyMarkers.reduce((acc, marker) => {
+                    acc[0] += marker.position[0];
+                    acc[1] += marker.position[1];
+                    return acc;
+                }, [0, 0])
+                    .map(x => x / readyMarkers.length)
+            ) : null);
 
             // Save startPosition, markers, zoomLevel to prevState
             prevState.current.startPosition = startPosition;
@@ -270,9 +274,11 @@ function DynamicComponent({ functionCall }: any) {
 
         return <div style={{ 'height': 800 }}>
             {/* <h1>Map Demo</h1> */}
-            <pre>{JSON.stringify(prevState.current, null, 2)}</pre>
+            {/* <pre>{JSON.stringify(prevState.current, null, 2)}</pre> */}
             <ErrorBoundary fallback={<div>Something went wrong</div>} resetKeys={[JSON.stringify(startPosition), JSON.stringify(markers)]}>
-                <Map center={startPosition} markers={markers} zoomLevel={zoomLevel} />
+                {startPosition && (
+                    <Map center={startPosition} markers={markers} zoomLevel={zoomLevel} />
+                )}
             </ErrorBoundary>
         </div>;
     }
