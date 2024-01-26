@@ -91,20 +91,44 @@ const functions: ChatCompletionCreateParams.Function[] = [
     {
         name: 'create_simple_form',
         description: 'Use this function to convert user-provided information into a structured form. It dynamically generates a form based on the provided JSON schema, tailored to capture specific details as requested by the user. The function ensures that the form is interactive and user-friendly, making it ideal for collecting and organizing user inputs efficiently.',
-       parameters: {
+        parameters: {
            type: 'object',
             properties: {
                  id: {
                     type: 'string',
-                     description: 'Unique identifier for the form. Use a new ID for a new form or an existing ID to edit an existing form.'
+                    description: 'Unique identifier for the form. Use a new ID for a new form or an existing ID to edit an existing form.'
                 },
                 jsonSchema: {
-                    type: 'string',
-                    description: 'Stringified object of JSON schema defining the structure of the form. It should include field types, titles, and descriptions. Define the data types, required fields, and overall structure of your form here. The schema dictates how user inputs are structured and validated. Do not use array types.'
-               },
+                    // type: 'string',
+                    // description: 'Stringified object of JSON schema defining the structure of the form. It should include field types, titles, and descriptions. Define the data types, required fields, and overall structure of your form here. The schema dictates how user inputs are structured and validated. Do not use array types.'
+                    type: 'object',
+                    description: `Object of JSON schema defining the structure of the form. It should include field types, titles, and descriptions. Define the data types, required fields, and overall structure of your form here. The schema dictates how user inputs are structured and validated.
+- Must always include clear & concise 'title' property for each field in JSON Schema.
+- Must always include informative & detailed 'description' property for each field in JSON Schema.
+- Use UI Schema 'ui:placeholder' property to provide examples.
+- Valid types: string, number, integer, boolean, object. Avoid: Do not use array types.
+- Valid formats (optional): date, date-time.
+- Must always use the most appropriate and specific type and format available.
+- Range inputs must be split into multiple fields (e.g. start-stop, min-max, etc are 2 fields/questions).
+- Can include any additional JSON Schema properties for each field to customize the form's presentation.
+- To aid in fast user input when there are finite choices use the enum property to provide a list of options for each field, or if the answer can be parsed as a number then use number type.
+  For example, instead of room size being one string input, it can be split into three number inputs: length and width and height.`,
+                    // Prefer to ask structured questions with multiple choice answers rather than open-ended questions unless necessary. This will enable using the selected values or numbers as inputs for programs which cannot interpret text.`,
+                    properties: {
+                        type: {
+                            type: 'string',
+                            description: 'Value must be "object"'
+                        },
+                    }
+                },
                 uiSchema: {
-                    type: 'string',
-                    description: 'Stringified object of UI schema for customizing the form\'s presentation. Customize the layout and presentation of your form fields here, including widget types and help texts. This schema controls the visual aspects of the form, enhancing user interaction and experience.'
+                    // type: 'string',
+                    // description: 'Stringified object of UI schema for customizing the form\'s presentation. Customize the layout and presentation of your form fields here, including widget types and help texts. This schema controls the visual aspects of the form, enhancing user interaction and experience.'
+                    type: 'object',
+                    description: `Object of UI schema for customizing the form\'s presentation. Customize the layout and presentation of your form fields here, including widget types and help texts. This schema controls the visual aspects of the form, enhancing user interaction and experience.
+                    Must include thoughtful and helpful and nonredundant 'ui:placeholder' and 'ui:help' for each field.
+                    Include any additional properties for each field to customize the form's presentation.`,
+                    properties: {}
                }
            },
            required: ['id', 'jsonSchema', 'uiSchema']
@@ -261,9 +285,49 @@ export async function POST(req: Request) {
 
     const response = await openai.chat.completions.create({
         // model: 'gpt-3.5-turbo-0613',
-        model: 'gpt-4-1106-preview',
+        // model: 'gpt-4-1106-preview',
+        model: 'gpt-4-0125-preview',
         stream: true,
-        messages,
+        messages: [
+            {
+                // id: nanoid(),
+                role: 'system',
+                content: `
+You are an intelligent assistant specializing in understanding user needs and intentions for the purpose of dynamically constructing a context-dependent UI using available components.
+
+When you receive a user's input, your first task is to decipher the user's intention. Consider the context, the specifics of the request, and any underlying needs or goals. If the request is ambiguous or lacks detail, ask targeted follow-up questions to gather the necessary information. Your aim is to develop a clear and comprehensive understanding of what the user wants to achieve, such that you can invoke the following tools to display to the user:
+
+Available tools:
+- Interactive Map: Essential for travel planning, event locations, and potentially home automation control.
+- 3D Rendering Engine: For interior design, home automation visualization, and potentially for event space planning.
+- Customizable Forms/Input Components: To present to a user to ask them follow up questions that clarify their intent.
+
+Instructions: 
+- If you need further context from the user to understand their intention sufficient enough to generate a good UI, respond with 3-5 follow-up questions or statements to clarify the user's intention. Focus on understanding the specific requirements, preferences, or constraints related to their request.
+- If you have only 1 quick follow-up question then use chat, otherwise must always use the 'create_simple_form' function.
+`
+                //                 content: `
+                // Now you are an advanced interface designer, capable of creating structured UI schemas based on the available user requirements.
+
+                // Now that you have analyzed the user's intentions, your next step is to design an interactive, user-friendly form that captures all necessary follow up information to address their request. Use the insights gathered from these follow-up questions to construct a YAML schema and corresponding UI schema that will guide the user through providing detailed and specific information.
+
+                // Instructions:
+                // - Only return correctly formatted JSON output which satisfies the AskUserQuestions type and no comments. Then, create a UI schema focusing on user-friendly interaction methods
+                // - Communicate using only the TypeScript types RJSFSchema, UiSchema
+                // - Must always use block scalar indicator style in YAML
+                // - Make sure you always add help text to input fields
+                // - For each form field, start with a sensible default
+                // Bonus:
+                // - After gathering all the user input, summarize the user's intent in a concise statement, which will inform the choice and configuration of the UI tools that will be invoked using the JSON output from this step.
+                // `
+            },
+            // {
+            //     id: nanoid(),
+            //     role: 'assistant',
+            //     function_call: `{"function_call": {"name": "create_simple_form", "arguments": "{\n  \"id\": \"trip_planning_form\",\n  \"jsonSchema\": \"{\\\"title\\\":\\\"Lake Tahoe Trip Planning\\\",\\\"type\\\":\\\"object\\\",\\\"properties\\\":{\\\"dates\\\":{\\\"type\\\":\\\"string\\\",\\\"title\\\":\\\"What are the intended dates for your trip?\\\",\\\"format\\\":\\\"date\\\"},\\\"transportation\\\":{\\\"type\\\":\\\"string\\\",\\\"title\\\":\\\"How do you plan to get to Lake Tahoe?\\\",\\\"enum\\\":[\\\"Car\\\",\\\"Bus\\\",\\\"Train\\\",\\\"Plane\\\",\\\"Other\\\"]},\\\"accommodation\\\":{\\\"type\\\":\\\"string\\\",\\\"title\\\":\\\"What type of accommodation are you looking for?\\\",\\\"enum\\\":[\\\"Hotel\\\",\\\"Motel\\\",\\\"Cabin\\\",\\\"Resort\\\",\\\"Airbnb\\\"]},\\\"activities\\\":{\\\"type\\\":\\\"string\\\",\\\"title\\\":\\\"What activities are you interested in at Lake Tahoe?\\\",\\\"description\\\":\\\"e.g., skiing, hiking, boating\\\"},\\\"budget\\\":{\\\"type\\\":\\\"string\\\",\\\"title\\\":\\\"What is your budget for the trip per person?\\\"},\\\"preferences\\\":{\\\"type\\\":\\\"string\\\",\\\"title\\\":\\\"Do you have any specific preferences or needs for this trip`,
+            // }
+            ...messages,
+        ],
         functions,
     });
 

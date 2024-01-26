@@ -1,12 +1,13 @@
 import dynamic from 'next/dynamic';
+import type { MapProps } from '../../components/map/map';
 
 const Map = dynamic(() => import('../../components/map/map'), {
         ssr: false,
 });
 
 export default function Page() {
-    const position = [51.505, -0.09]
-    const markers = [{
+    const position: [number, number] = [51.505, -0.09]
+    const markers: MapProps['markers'] = [{
         label: 'First location',
         position: [51.505, -0.09],
         color: 'red',

@@ -44,11 +44,11 @@ export default function Sidebar({ messages, children, ShowMessage, onSubmitFormC
             <div className="mt-4 space-y-2">
                 { messages.map((message, index) => {
                     return <div className="p-2 rounded-md bg-gray-100 dark:bg-gray-800">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                       {/* <strong>{message.role}:</strong> */}
                       {/* {message.content} */}
                       <ShowMessage message={message} onSubmitFormComponent={onSubmitFormComponent} />
-                    </p>
+                    </div>
                   </div>
                 })
             }

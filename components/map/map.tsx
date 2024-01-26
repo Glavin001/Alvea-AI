@@ -13,8 +13,8 @@ const markersByColor = {
     'blue': new Icon({iconUrl: markerBlue.src, iconSize: [24, 32]})
 }
 
-interface MapProps {
-    zoomLevel: number;
+export interface MapProps {
+    zoomLevel?: number;
     center: [number, number];
     markers: {
         label: string;
@@ -23,16 +23,23 @@ interface MapProps {
     }[];
 }
 
-export default function Map({center, markers, zoomLevel}: MapProps) {
+export default function Map({center, markers, zoomLevel = 13 }: MapProps) {
 
     return <div>
-        <MapContainer center={center} zoom={zoomLevel} style={{ height: '100vh' }}>
+        <MapContainer center={center} zoom={zoomLevel} style={{ height: '100vh' }}
+        {...{} as any}
+        >
             <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            {...{} as any}
             />
             { markers.map(data => {
-                return <Marker position={data.position} icon={markersByColor[data?.color] ?? markersByColor['red'] }>
+                return <Marker
+                    position={data.position}
+                    icon={markersByColor[data?.color] ?? markersByColor['red'] }
+                    {...{} as any}
+                >
                     <Popup>{data.label}</Popup>
                 </Marker>
             })}

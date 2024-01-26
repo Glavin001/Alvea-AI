@@ -16,14 +16,8 @@ import validator from '@rjsf/validator-ajv8';
 
 // const log = (type) => console.log.bind(console, type);
 
-export const Form = ({ jsonSchema, uiSchema, onSubmit }) => {
+export const Form = ({ jsonSchema, uiSchema, onSubmit }: any) => {
     return <div>
-        {/* <pre>
-            {JSON.stringify(jsonSchema, null, 2)}
-        </pre>
-        <pre>
-            {JSON.stringify(uiSchema, null, 2)}
-        </pre> */}
         <RjsfForm
             className="schema-form"
             // schema={schema}
@@ -35,6 +29,16 @@ export const Form = ({ jsonSchema, uiSchema, onSubmit }) => {
             onSubmit={onSubmit}
             // onError={log('errors')}
         />
+        {/*
+        <div>JSON schema:</div>
+        <pre>
+            {JSON.stringify(jsonSchema, null, 2)}
+        </pre>
+        <div>UI schema:</div>
+        <pre>
+            {JSON.stringify(uiSchema, null, 2)}
+        </pre>
+        */}
     </div>;
 }
 
