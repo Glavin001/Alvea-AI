@@ -8,7 +8,7 @@ import { OpenAiHandler } from "openai-partial-stream";
 import { ErrorBoundary } from "react-error-boundary";
 import dynamic from 'next/dynamic';
 
-import Home from '@/components/home';
+import Home, { HomeProps } from '@/components/home';
 import Sidebar from '@/components/sidebar';
 import Head from 'next/head';
 import { useState } from 'react';
@@ -85,11 +85,21 @@ export default function Chat() {
     };
 
     const [query, setQuery] = useState('');
-    const [mode, setMode] = useState('home')
+    const [mode, setMode] = useState<'home' | 'tools'>('home')
     // const [mode, setMode] = useState('tools')
+    const [apiKey, setApiKey] = useState<string | null>(null);
 
     const { messages, input, handleInputChange, handleSubmit, append } = useChat({
         api: '/api/chat-with-functions-2',
+        body: {
+            apiKey,
+        },
+        onError: (error) => {
+            console.error('Chat error:', error);
+            alert(`Chat error: ${error.message}`);
+            // Clear API key from local storage
+            window.localStorage.removeItem('OPENAI_API_KEY');
+        },
         experimental_onFunctionCall: functionCallHandler,
 //         initialMessages: [
 //             {
@@ -132,14 +142,20 @@ export default function Chat() {
 //         ]
     });
 
-    const submitFirstQuery = (query: string) => {
+    const submitFirstQuery: HomeProps['runQuery'] = ({ query, apiKey }) => {
         setQuery(query);
-        console.log('run query', query)
+        setApiKey(apiKey);
         append({
             id: nanoid(),
             role: 'user',
             content: query,
             createdAt: new Date(),
+        }, {
+            options: {
+                body: {
+                    apiKey,
+                }
+            }
         });
         setMode('tools');
     };
@@ -157,16 +173,14 @@ export default function Chat() {
         append(formResponse);
     }
 
-
     const isBigMessage = (message: Message) => {
         return message.function_call && JSON.stringify(message.function_call).includes('create_dynamic_map')
-      };
-      const bigMessages = messages.filter(isBigMessage);
-      const chatMessages = messages.filter((msg) => !isBigMessage(msg))
-        .filter(message => message.role !== 'system' && message.role !== 'function')
-  
-      const bigMessage = bigMessages[bigMessages.length - 1];
-  
+    };
+    const bigMessages = messages.filter(isBigMessage);
+    const chatMessages = messages.filter((msg) => !isBigMessage(msg))
+    .filter(message => message.role !== 'system' && message.role !== 'function')
+
+    const bigMessage = bigMessages[bigMessages.length - 1];
 
     return (
         <>

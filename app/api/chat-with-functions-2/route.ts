@@ -6,11 +6,6 @@ import {
 import OpenAI from 'openai';
 import type { ChatCompletionCreateParams } from 'openai/resources/chat';
 
-// Create an OpenAI API client (that's edge friendly!)
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || '',
-});
-
 // IMPORTANT! Set the runtime to edge
 export const runtime = 'edge';
 
@@ -285,7 +280,14 @@ const functions: ChatCompletionCreateParams.Function[] = [
 ];
 
 export async function POST(req: Request) {
-    const { messages } = await req.json();
+    try {
+    const body = await req.json();
+    const { messages, apiKey } = body;
+
+    // Create an OpenAI API client (that's edge friendly!)
+    const openai = new OpenAI({
+        apiKey: apiKey || process.env.OPENAI_API_KEY || '',
+    });
 
     const response = await openai.chat.completions.create({
         // model: 'gpt-3.5-turbo-0613',
@@ -376,4 +378,9 @@ Instructions:
 
     // return new StreamingTextResponse(stream, {}, data);
     return new StreamingTextResponse(stream);
+    } catch (error: any) {
+        console.error(error);
+        // return new Response('Internal server error', { status: 500 });
+        return new Response(error.message, { status: 500 });
+    }
 }

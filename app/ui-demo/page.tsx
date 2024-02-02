@@ -21,7 +21,7 @@ export default function Component() {
         api: '/api/chat-with-functions-2'
     });
 
-    const runQuery = (query: string) => {
+    const runQuery = ({ query }) => {
         setQuery(query);
         console.log('run query', query)
         append({
