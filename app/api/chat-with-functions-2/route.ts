@@ -106,7 +106,7 @@ const functions: ChatCompletionCreateParams.Function[] = [
 - Must always include clear & concise 'title' property for each field in JSON Schema.
 - Must always include informative & detailed 'description' property for each field in JSON Schema.
 - Use UI Schema 'ui:placeholder' property to provide examples.
-- Valid types: string, number, integer, boolean, object. Avoid: Do not use array types.
+- Valid types: string, number, integer, object. Avoid: Do not use array and boolean types.
 - Valid formats (optional): date, date-time.
 - Must always use the most appropriate and specific type and format available.
 - Range inputs must be split into multiple fields (e.g. start-stop, min-max, etc are 2 fields/questions).
@@ -225,6 +225,7 @@ const functions: ChatCompletionCreateParams.Function[] = [
 
 
   // 3D generation
+  /*
     {
         name: 'upsert_3d_scene',
         description: 'Generate 3D scene to visually represent the scene described in the form',
@@ -242,7 +243,9 @@ const functions: ChatCompletionCreateParams.Function[] = [
             }
         },
     },
+    */
     // Checklist
+    /*
     {
         name: 'create_interactive_checklist',
         description: 'This function dynamically generates an interactive checklist based on user inputs. Designed to enable users to efficiently manage tasks, goals, or items, this checklist can be customized with various options and states. It is ideal for applications in task management, event planning, or any scenario where a list of items needs to be tracked and updated.',
@@ -278,6 +281,7 @@ const functions: ChatCompletionCreateParams.Function[] = [
             required: ['id', 'items'],
         },
     }
+    */
 ];
 
 export async function POST(req: Request) {
