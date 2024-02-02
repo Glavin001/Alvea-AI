@@ -2,7 +2,7 @@
 
 | 👉 [**Demo Video** 🎥](https://www.loom.com/share/0d057eabb1bb430d8902bf7fdc1f3911?sid=1205e6cf-7e68-49e5-9ac7-4136abd5926a) |
 | --- |
-| <img width="2042" alt="image" src="https://github.com/Glavin001/Alvea-AI/assets/1885333/fad5833e-951b-4361-b5b1-c04477726fe9"> |
+| [<img width="2042" alt="image" src="https://github.com/Glavin001/Alvea-AI/assets/1885333/fad5833e-951b-4361-b5b1-c04477726fe9">](https://www.loom.com/share/0d057eabb1bb430d8902bf7fdc1f3911?t=142&sid=163c6712-15d4-42f2-898b-165903617bdb) |
 
 | About Alvea | 🥇 1st Place Winning Team |
 | --- | --- |
@@ -38,24 +38,46 @@ These are the example tasks demonstrated during the hackathon to showcase how Al
 
 <table>
   <tr>
-    <th>Trip Planning</th>
-    <th colspan="2">Home Theater Setup</th>
-  </tr>
-  <tr>
-    <td>Alvea streamlines trip planning by combining interactive forms for inputting travel preferences with a visual map component, showcasing destinations and points of interest with markers for an intuitive planning experience.</td>
-    <td colspan="2">For home theater enthusiasts, Alvea captures room specifications through a simple form and employs AI code generation to show a 3D visualization of the room, enabling users to virtually place speakers and optimize their audio setup with precision and ease.</td>
+    <th>
+        <a href="https://www.loom.com/share/0d057eabb1bb430d8902bf7fdc1f3911?t=182&sid=30184ea9-2e78-4efd-99ce-c04de60fcf6e">
+        Trip Planning
+        </a>
+    </th>
+    <th colspan="2">
+        <a href="https://www.loom.com/share/0d057eabb1bb430d8902bf7fdc1f3911?t=243&sid=aa4fd1d2-5907-4195-a7df-b4ae55e893f4">
+        Home Theater Setup
+        </a>
+    </th>
   </tr>
   <tr>
     <td>
-      <a href="https://www.loom.com/share/0d057eabb1bb430d8902bf7fdc1f3911?sid=1205e6cf-7e68-49e5-9ac7-4136abd5926a">
+    <strong>Task:</strong>
+    <blockquote>"I want to plan a trip to lake tahoe for 2"</blockquote>
+    <br/><br/>
+    Alvea streamlines trip planning by combining interactive forms for inputting travel preferences with a visual map component, showcasing destinations and points of interest with markers for an intuitive planning experience.
+    </td>
+    <td colspan="2">
+    <strong>Task:</strong>
+    <blockquote>"I'm trying to plan my new home theater room, 5.1.2 dolby atmos. Where should I put my speakers?"</blockquote>
+    <br/>
+    For home theater enthusiasts, Alvea captures room specifications through a simple form and employs AI code generation to show a 3D visualization of the room, enabling users to virtually place speakers and optimize their audio setup with precision and ease.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://www.loom.com/share/0d057eabb1bb430d8902bf7fdc1f3911?t=182&sid=30184ea9-2e78-4efd-99ce-c04de60fcf6e">
         <img width="2045" alt="image" src="https://github.com/Glavin001/Alvea-AI/assets/1885333/452271f0-2a52-403e-b5f4-6c27c9d678aa">
       </a>
     </td>
     <td>
-      <img width="384" alt="image" src="https://github.com/Glavin001/Alvea-AI/assets/1885333/6afcd6f9-8fd2-43e3-acff-3f0f9a43afa7">
+        <a href="https://www.loom.com/share/0d057eabb1bb430d8902bf7fdc1f3911?t=243&sid=aa4fd1d2-5907-4195-a7df-b4ae55e893f4">
+            <img width="384" alt="image" src="https://github.com/Glavin001/Alvea-AI/assets/1885333/6afcd6f9-8fd2-43e3-acff-3f0f9a43afa7">
+        </a>
     </td>
     <td>
-      <img width="1449" alt="image" src="https://github.com/Glavin001/Alvea-AI/assets/1885333/6c76ce47-4ca6-4372-80ec-4a4581ff1b15">
+        <a href="https://www.loom.com/share/0d057eabb1bb430d8902bf7fdc1f3911?t=243&sid=aa4fd1d2-5907-4195-a7df-b4ae55e893f4">
+            <img width="1449" alt="image" src="https://github.com/Glavin001/Alvea-AI/assets/1885333/6c76ce47-4ca6-4372-80ec-4a4581ff1b15">
+        </a>
     </td>
   </tr>
 </table>
